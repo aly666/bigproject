@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fb-staging
+  namespace: staging
+spec:
+  selector:
+    matchLabels:
+      app: fb-staging
+  template:
+    metadata:
+      labels:
+        app: fb-staging
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-private
+      containers:
+      - name: fb-staging
+        image: aly666/aly666/fb-stag:1.0.3-staging
+        ports:
+        - containerPort: 80
+        env:
+        - name: DB_HOST
+          value: mysql-sevice-fb.staging.svc.cluster.local
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: DB_PASS
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fb-staging
+  namespace: staging
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: fb-staging
+
