@@ -3,6 +3,12 @@ kind: Deployment
 metadata:
   name: fb
   namespace: production
+  labels:
+    app: fb
+    name : fb
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/approvals: "1"
 spec:
   replicas: 1
   selector:
